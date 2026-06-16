@@ -142,18 +142,28 @@ export function ContactMenu() {
         Melbourne, AU · open to AI/ML + full-stack roles
       </p>
 
-      {/* Task 4 - prominent post-credits side-quest banner with a pulsing border. */}
-      <Link
-        href="/quest"
-        className="gx group/banner sq-pulse mt-6 flex w-full items-center justify-center border-2 border-yellow/60 px-4 py-4 text-yellow transition-colors hover:bg-yellow hover:text-bg"
-      >
-        <span className="font-pixel text-[10px] leading-relaxed">
-          ★ NOT DONE YET? FORGE A CUSTOM DEMO{" "}
-          <span aria-hidden className="ml-1 inline-block group-hover/banner:translate-x-0.5">
-            ▶
+      {/* Post-credits CTAs: forge a custom demo or jump into the arcade. */}
+      <p className="font-pixel mt-8 text-center text-[9px] text-yellow">★ NOT DONE YET?</p>
+      <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+        <Link
+          href="/quest"
+          className="gx group/forge sq-pulse flex flex-1 items-center justify-center border-2 border-yellow/60 px-4 py-4 text-yellow transition-colors hover:bg-yellow hover:text-bg"
+        >
+          <span className="font-pixel text-[10px] leading-relaxed">
+            FORGE A CUSTOM DEMO{" "}
+            <span aria-hidden className="ml-1 inline-block group-hover/forge:translate-x-0.5">▶</span>
           </span>
-        </span>
-      </Link>
+        </Link>
+        <Link
+          href="/arcade"
+          className="gx group/arcade flex flex-1 items-center justify-center border-2 border-cyan/60 px-4 py-4 text-cyan transition-colors hover:bg-cyan hover:text-bg"
+        >
+          <span className="font-pixel text-[10px] leading-relaxed">
+            TRY THE ARCADE{" "}
+            <span aria-hidden className="ml-1 inline-block group-hover/arcade:translate-x-0.5">▶</span>
+          </span>
+        </Link>
+      </div>
 
       {/* Self-contained pulse (no globals.css edits). Reduced motion is killed
           globally via html[data-motion="reduced"]; the @media query covers the

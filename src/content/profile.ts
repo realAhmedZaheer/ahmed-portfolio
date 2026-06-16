@@ -8,6 +8,6 @@ export const profile: Profile = {
   location: "Melbourne, Victoria, Australia",
   education: [
     { title: "VCE Graduate", org: "Mount Ridley College" },
-    { title: "Diploma of IT", org: "Victoria University", status: "in progress" },
+    { title: "Diploma of IT", org: "Victoria University" },
   ],
 };
