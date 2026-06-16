@@ -17,6 +17,10 @@ const WarpLoading = dynamic(
 
 type Phase = "boot" | "warp" | "title";
 
+// Temporarily skipping the intro cinematic: land straight on the title.
+// Flip back to true to restore the CRT boot → warp reveal.
+const BOOT_ENABLED = false;
+
 /**
  * The home-screen cinematic chain: CRT boot → warp loading → title reveal.
  * If the boot is skipped (in-app navigation back, reduced motion, already
@@ -24,12 +28,12 @@ type Phase = "boot" | "warp" | "title";
  * TitleScreen stays mounted underneath throughout (SEO + no flash).
  */
 export function HomeFlow() {
-  const [phase, setPhase] = useState<Phase>("boot");
+  const [phase, setPhase] = useState<Phase>(BOOT_ENABLED ? "boot" : "title");
 
   return (
     <>
       {phase !== "title" && <div aria-hidden className="fixed inset-0 z-[99] bg-[#070310]" />}
-      {phase === "boot" && (
+      {BOOT_ENABLED && phase === "boot" && (
         <BootSequence onComplete={(played) => setPhase(played ? "warp" : "title")} />
       )}
       {phase === "warp" && <WarpLoading onComplete={() => setPhase("title")} />}
