@@ -1,0 +1,78 @@
+import type { SkillCategory } from "@/types/content";
+
+export const skills: SkillCategory[] = [
+  {
+    name: "AI / LLM Engineering",
+    items: [
+      "Google Gemini (function calling, agentic tools, multi-turn)",
+      "OpenAI API (GPT-4 → GPT-5, migrations)",
+      "Anthropic Claude",
+      "Prompt engineering",
+      "Structured outputs",
+      "Streaming responses",
+      "Xenova Transformers (SigLIP, DETR)",
+      "Diffusion-model workflows",
+      "LoRA fine-tuning",
+      "Hugging Face Hub",
+    ],
+  },
+  {
+    name: "Cloud & Infrastructure",
+    items: [
+      "AWS",
+      "Google Cloud (GCS)",
+      "Docker (multi-stage GPU builds)",
+      "Docker Compose",
+      "NVIDIA Container Toolkit (CUDA, PyTorch)",
+      "Kubernetes",
+      "GitHub Actions CI/CD",
+    ],
+  },
+  {
+    name: "Frontend & Mobile",
+    items: [
+      "Next.js 14/15 (App + Pages)",
+      "React 19",
+      "TypeScript",
+      "Material-UI",
+      "Tailwind CSS",
+      "SWR",
+      "ApexCharts",
+      "React Native",
+      "Expo / Expo Router",
+      "NativeWind",
+      "React Query",
+    ],
+  },
+  {
+    name: "Backend & Languages",
+    items: [
+      "Node.js",
+      "Express",
+      "NestJS",
+      "Python",
+      "TypeScript",
+      "JavaScript",
+      "MongoDB (Mongoose, aggregation, bulkWrite)",
+      "Redis",
+      "BullMQ",
+      "Kafka",
+      "MySQL",
+      "PostgreSQL",
+      "Firebase Auth",
+      "REST API design",
+    ],
+  },
+  {
+    name: "Tooling",
+    items: [
+      "Git",
+      "Linux",
+      "Cypress E2E",
+      "PostHog",
+      "Sentry",
+      "Role-based access control",
+      "Schema design & migrations",
+    ],
+  },
+];

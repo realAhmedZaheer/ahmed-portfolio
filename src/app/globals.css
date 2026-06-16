@@ -1,0 +1,1352 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #080510;
+  --bg2: #0e0a1c;
+  --purple: #a855f7;
+  --purple-2: #7c3aed;
+  --cyan: #22d3ee;
+  --pink: #ec4899;
+  --yellow: #fde047;
+  --white: #f5f3ff;
+  --dim: #9488bd;
+  --term-green: #7cffb2;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg2: var(--bg2);
+  --color-purple: var(--purple);
+  --color-purple-2: var(--purple-2);
+  --color-cyan: var(--cyan);
+  --color-pink: var(--pink);
+  --color-yellow: var(--yellow);
+  --color-white: var(--white);
+  --color-dim: var(--dim);
+  --color-term: var(--term-green);
+  --font-pixel: var(--ff-pixel);
+  --font-term: var(--ff-term);
+  --font-logo: var(--ff-logo);
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--white);
+}
+
+body {
+  font-family: var(--ff-term), monospace;
+  background:
+    radial-gradient(1100px 600px at 85% -5%, rgba(168, 85, 247, 0.18), transparent 60%),
+    radial-gradient(800px 500px at 0% 105%, rgba(34, 211, 238, 0.12), transparent 60%),
+    linear-gradient(180deg, #0b0718, #080510);
+  min-height: 100vh;
+}
+
+.font-pixel {
+  font-family: var(--ff-pixel), monospace;
+}
+
+.font-logo {
+  font-family: var(--ff-logo), ui-sans-serif, sans-serif;
+}
+
+::selection {
+  background: var(--pink);
+  color: var(--bg);
+}
+
+*:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 3px;
+}
+
+/* dark pixel scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--purple-2);
+  border: 2px solid var(--bg);
+}
+
+/* ===== themed pixel cursor ===== */
+@media (pointer: fine) {
+  html {
+    cursor: var(--cur-arrow, auto);
+  }
+
+  a,
+  button,
+  summary,
+  label,
+  [role="button"],
+  [role="radio"],
+  .gx,
+  .gx-row,
+  .gx-card {
+    cursor: var(--cur-point, pointer);
+  }
+
+  /* forge games swap in a crosshair reticle */
+  .cursor-aim,
+  .cursor-aim * {
+    cursor: var(--cur-aim, crosshair);
+  }
+
+  input,
+  textarea {
+    cursor: text;
+  }
+
+  :disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+}
+
+/* neon pixel cursor trail (spawned by <CursorFx>; never on reduced motion) */
+.cursor-trail {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+}
+
+.trail-bit {
+  position: fixed;
+  width: 5px;
+  height: 5px;
+  margin: -2px 0 0 -2px;
+  pointer-events: none;
+  image-rendering: pixelated;
+  box-shadow: 0 0 5px currentColor;
+  animation: trail-fade 0.34s steps(4, end) forwards;
+}
+
+@keyframes trail-fade {
+  0% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+}
+
+/* ===== FX: chromatic-aberration glitch =====
+   Under reduced motion the jitter stops but the static fringe stays -
+   it is a visual style, not motion. */
+.glitch {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.glitch::before {
+  color: var(--cyan);
+  transform: translate(-2px, 0);
+  animation: glitch-slice-a 3.1s steps(1, end) infinite;
+  opacity: 0.85;
+}
+
+.glitch::after {
+  color: var(--pink);
+  transform: translate(2px, 0);
+  animation: glitch-slice-b 2.3s steps(1, end) infinite;
+  opacity: 0.85;
+}
+
+@keyframes glitch-slice-a {
+
+  0%,
+  87%,
+  100% {
+    clip-path: inset(0 0 0 0);
+    transform: translate(-2px, 0);
+  }
+
+  88% {
+    clip-path: inset(12% 0 52% 0);
+    transform: translate(-4px, -2px);
+  }
+
+  93% {
+    clip-path: inset(58% 0 8% 0);
+    transform: translate(-3px, 1px);
+  }
+
+  97% {
+    clip-path: inset(78% 0 2% 0);
+    transform: translate(-2px, 2px);
+  }
+}
+
+@keyframes glitch-slice-b {
+
+  0%,
+  84%,
+  100% {
+    clip-path: inset(0 0 0 0);
+    transform: translate(2px, 0);
+  }
+
+  86% {
+    clip-path: inset(45% 0 28% 0);
+    transform: translate(4px, 1px);
+  }
+
+  91% {
+    clip-path: inset(5% 0 72% 0);
+    transform: translate(3px, -1px);
+  }
+
+  96% {
+    clip-path: inset(65% 0 12% 0);
+    transform: translate(2px, -2px);
+  }
+}
+
+/* hover-only variant: fringe hidden until a .group parent is hovered/focused */
+.glitch--hover::before,
+.glitch--hover::after {
+  opacity: 0;
+}
+
+.group:hover .glitch--hover::before,
+.group:hover .glitch--hover::after,
+.group:focus-within .glitch--hover::before,
+.group:focus-within .glitch--hover::after {
+  opacity: 0.85;
+}
+
+/* ===== FX: CRT overlay (scanlines + pixel grid + vignette) ===== */
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  /* isolate onto its own compositor layer so it isn't repainted together
+     with content/transforms beneath it */
+  transform: translateZ(0);
+  background: repeating-linear-gradient(0deg,
+      rgba(0, 0, 0, 0.2) 0 1px,
+      transparent 1px 3px);
+}
+
+@media (max-width: 640px) {
+
+  /* the dot-grid is the most expensive of the three layers - drop it on mobile */
+  .crt-overlay::before {
+    display: none;
+  }
+}
+
+.crt-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 7px 7px;
+}
+
+.crt-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center,
+      transparent 58%,
+      rgba(2, 0, 8, 0.5) 100%);
+}
+
+/* ===== pixel-notched corners ===== */
+.pixel-corners {
+  clip-path: polygon(0 8px, 8px 8px, 8px 0,
+      calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px,
+      100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%,
+      8px 100%, 8px calc(100% - 8px), 0 calc(100% - 8px));
+}
+
+/* angular sci-fi HUD bevel */
+.hud-frame {
+  clip-path: polygon(0 16px, 16px 0,
+      calc(100% - 16px) 0, 100% 16px,
+      100% calc(100% - 16px), calc(100% - 16px) 100%,
+      16px 100%, 0 calc(100% - 16px));
+}
+
+/* ===== game-feel screen change: discrete CRT frames, no easing ===== */
+.screen-in {
+  animation: screen-in 0.24s steps(3, end);
+  transform-origin: 50% 45%;
+}
+
+@keyframes screen-in {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.004);
+    filter: brightness(3.5) saturate(0.2);
+  }
+
+  34% {
+    opacity: 1;
+    transform: scaleY(0.06);
+    filter: brightness(3) saturate(0.4);
+  }
+
+  67% {
+    opacity: 1;
+    transform: scaleY(1.015);
+    filter: brightness(1.7);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+    filter: brightness(1);
+  }
+}
+
+/* quick eased pops for menus/cards (snappy appear, no slide) */
+.pop-in {
+  animation: pop-in 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== unravel loader (START transition) ===== */
+.px-dissolve {
+  opacity: 0;
+  animation: px-dissolve 0.3s steps(3, end) both;
+}
+
+@keyframes px-dissolve {
+  0% {
+    opacity: 0;
+    background: var(--spark);
+  }
+
+  35% {
+    opacity: 1;
+    background: var(--spark);
+  }
+
+  70% {
+    opacity: 1;
+    background: #1a1030;
+  }
+
+  100% {
+    opacity: 1;
+    background: #040208;
+  }
+}
+
+.loading-bar {
+  display: block;
+  width: 220px;
+  height: 14px;
+  border: 2px solid var(--cyan);
+  padding: 2px;
+  box-shadow: 0 0 14px rgba(34, 211, 238, 0.4);
+}
+
+.loading-bar i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  transform-origin: left;
+  animation: load-fill 1.05s steps(8, end) 1.3s both;
+}
+
+@keyframes load-fill {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ===== small loops ===== */
+.blink {
+  animation: blink-step 1.06s steps(2, end) infinite;
+}
+
+@keyframes blink-step {
+  50% {
+    opacity: 0;
+  }
+}
+
+.flicker {
+  animation: flicker-step 2.6s steps(2, end) infinite;
+}
+
+@keyframes flicker-step {
+
+  0%,
+  91%,
+  100% {
+    opacity: 1;
+  }
+
+  93% {
+    opacity: 0.35;
+  }
+}
+
+/* ===== accessibility: skip-to-content link ===== */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 200;
+  transform: translateY(-250%);
+  background: var(--cyan);
+  color: var(--bg);
+  padding: 8px 12px;
+  font-family: var(--ff-pixel), monospace;
+  font-size: 10px;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* ===== game-feel interactivity ===== */
+.gx {
+  transition: transform 0.12s ease-out, filter 0.12s ease, color 0.12s ease,
+    background-color 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.gx:hover {
+  transform: scale(1.12);
+}
+
+.gx:active {
+  transform: scale(0.92);
+}
+
+.gx-row {
+  transition: transform 0.12s ease-out, background-color 0.12s ease,
+    color 0.12s ease;
+}
+
+.gx-row:hover {
+  transform: translateX(6px);
+}
+
+.gx-row:active {
+  transform: translateX(6px) scale(0.99);
+}
+
+.gx-card {
+  transition: transform 0.18s ease-out, border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.gx-card:hover {
+  transform: translateY(-4px) scale(1.02);
+}
+
+html[data-motion="reduced"] .gx,
+html[data-motion="reduced"] .gx-row,
+html[data-motion="reduced"] .gx-card {
+  transition: none;
+}
+
+html[data-motion="reduced"] .gx:hover,
+html[data-motion="reduced"] .gx:active,
+html[data-motion="reduced"] .gx-row:hover,
+html[data-motion="reduced"] .gx-row:active,
+html[data-motion="reduced"] .gx-card:hover {
+  transform: none;
+}
+
+/* ===== forge minigame ===== */
+.forge-part {
+  animation: forge-drift var(--fd-dur, 3.2s) ease-in-out var(--fd-delay, 0s) infinite alternate;
+}
+
+@keyframes forge-drift {
+  from {
+    transform: translate(0, 0);
+  }
+
+  to {
+    transform: translate(var(--fd-x, 6px), var(--fd-y, -10px));
+  }
+}
+
+.forge-part-collect {
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.22s cubic-bezier(0.5, -0.4, 1, 0.6), opacity 0.22s ease;
+}
+
+/* ===== player avatar idle animation ===== */
+.avatar-bob {
+  animation: avatar-bob 3.4s ease-in-out infinite;
+}
+
+@keyframes avatar-bob {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* visor scan-line sweep */
+.av-scan {
+  animation: av-scan 2.6s ease-in-out infinite;
+}
+
+@keyframes av-scan {
+
+  0%,
+  100% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+
+  18% {
+    opacity: 0.95;
+  }
+
+  50% {
+    transform: translateX(4px);
+    opacity: 0.95;
+  }
+
+  82% {
+    opacity: 0;
+  }
+}
+
+/* occasional visor power-flicker (a "blink") */
+.av-blink {
+  animation: av-blink 4.2s steps(1, end) infinite;
+}
+
+@keyframes av-blink {
+
+  0%,
+  92%,
+  100% {
+    opacity: 0;
+  }
+
+  94%,
+  97% {
+    opacity: 0.85;
+  }
+}
+
+/* floating glitch sparks */
+.av-spark {
+  animation: av-spark 2.8s ease-in-out infinite;
+}
+
+@keyframes av-spark {
+
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+
+  50% {
+    transform: translateY(-2px);
+    opacity: 1;
+  }
+}
+
+/* ===== warp loading (post-boot intro) ===== */
+.warp-streak {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: var(--h, 8px);
+  width: 30vmax;
+  transform-origin: 0 50%;
+  opacity: 0;
+  animation: warp-streak var(--dur, 1.3s) cubic-bezier(0.55, 0, 0.95, 0.5) var(--delay, 0s) infinite;
+}
+
+/* solid pixel beam: bright top edge, dark bottom edge - like a sprite */
+.warp-streak--solid {
+  background: var(--c);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.5),
+    0 0 6px var(--c);
+}
+
+/* trail of square chunks with gaps between them */
+.warp-streak--blocks {
+  background: repeating-linear-gradient(90deg,
+      var(--c) 0 16px,
+      transparent 16px 27px);
+}
+
+/* hot head block leading the beam toward the center */
+.warp-streak::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 18px;
+  background: var(--c);
+  filter: brightness(1.9) saturate(0.55);
+}
+
+@keyframes warp-streak {
+  0% {
+    transform: rotate(var(--a)) translateX(var(--start, 62vmax)) scaleX(1);
+    opacity: 0;
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  92% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: rotate(var(--a)) translateX(1.2vmax) scaleX(0.12);
+    opacity: 0;
+  }
+}
+
+.warp-bit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  opacity: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 0 rgba(0, 0, 0, 0.45);
+  animation: warp-bit var(--dur, 2s) cubic-bezier(0.55, 0, 0.95, 0.5) var(--delay, 0s) infinite;
+}
+
+@keyframes warp-bit {
+  0% {
+    transform: rotate(var(--a)) translateX(var(--start, 58vmax));
+    opacity: 0;
+  }
+
+  9% {
+    opacity: 1;
+  }
+
+  88% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: rotate(var(--a)) translateX(2.5vmax);
+    opacity: 0;
+  }
+}
+
+.px-flick {
+  animation: px-flick 0.9s ease-in-out var(--fl-delay, 0s) infinite;
+}
+
+@keyframes px-flick {
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.85);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== the name forming out of pixels (during the warp) ===== */
+.logo-materialize>h1 {
+  animation: logo-form 1.6s ease-out 0.55s both;
+}
+
+@keyframes logo-form {
+  0% {
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 0.35;
+  }
+
+  48% {
+    opacity: 0.55;
+  }
+
+  70% {
+    opacity: 0.82;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+/* the loose pixel mass around the forming name, absorbed once it stabilizes */
+.form-cluster {
+  animation: cluster-out 0.5s ease-out 1.9s both;
+}
+
+@keyframes cluster-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+/* chunky segmented retro loading bar */
+.seg-bar {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 3px solid #dceaff;
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(160, 200, 255, 0.5), inset 0 0 6px rgba(160, 200, 255, 0.25);
+}
+
+.seg {
+  width: 14px;
+  height: 16px;
+  background: #cfe6ff;
+  box-shadow: 0 0 6px rgba(190, 220, 255, 0.8);
+  opacity: 0;
+  animation: seg-fill 0.01s steps(1, end) both;
+}
+
+@keyframes seg-fill {
+  to {
+    opacity: 1;
+  }
+}
+
+/* ===== game-title logo ===== */
+.logo-main {
+  display: block;
+  transform: skewX(-12deg);
+  background: linear-gradient(180deg,
+      #ffffff 0%,
+      #efe9ff 30%,
+      #cdb4ff 48%,
+      #9d6bff 62%,
+      #7c3aed 78%,
+      #4c1d95 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(26, 10, 50, 0.85);
+  filter:
+    drop-shadow(3px 2px 0 rgba(236, 72, 153, 0.45)) drop-shadow(-2px -2px 0 rgba(34, 211, 238, 0.35)) drop-shadow(0 0 9px rgba(168, 85, 247, 0.25));
+  line-height: 0.95;
+  position: relative;
+}
+
+.logo-main::before,
+.logo-main::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  pointer-events: none;
+}
+
+.logo-main::before {
+  background-image: linear-gradient(180deg, var(--cyan), var(--cyan));
+  transform: translate(5px, -3px);
+  clip-path: inset(8% 0 70% 0);
+  animation: logo-slice-a 3.4s steps(1, end) infinite;
+}
+
+.logo-main::after {
+  background-image: linear-gradient(180deg, var(--pink), var(--pink));
+  transform: translate(-5px, 3px);
+  clip-path: inset(68% 0 6% 0);
+  animation: logo-slice-b 2.7s steps(1, end) infinite;
+}
+
+@keyframes logo-slice-a {
+
+  0%,
+  88%,
+  100% {
+    opacity: 0;
+  }
+
+  90%,
+  96% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes logo-slice-b {
+
+  0%,
+  82%,
+  100% {
+    opacity: 0;
+  }
+
+  84%,
+  92% {
+    opacity: 0.85;
+  }
+}
+
+/* sword-like side blades extending from the wordmark */
+.logo-blade {
+  position: absolute;
+  top: 52%;
+  height: 7px;
+  width: 16%;
+  background: linear-gradient(90deg, transparent, #d8b4fe 55%, #ffffff);
+  box-shadow: 0 0 7px rgba(216, 180, 254, 0.45);
+  transform: translateY(-50%) skewX(-30deg);
+}
+
+.logo-blade--left {
+  right: 100%;
+  margin-right: 16px;
+  transform: translateY(-50%) skewX(-30deg) scaleX(-1);
+}
+
+.logo-blade--right {
+  left: 100%;
+  margin-left: 16px;
+}
+
+/* ===== title backdrop life ===== */
+.twinkle {
+  animation: twinkle var(--tw-dur, 3s) ease-in-out var(--tw-delay, 0s) infinite;
+}
+
+@keyframes twinkle {
+
+  0%,
+  100% {
+    opacity: 0.08;
+  }
+
+  50% {
+    opacity: 0.75;
+  }
+}
+
+.fall {
+  animation: fall var(--fall-dur, 16s) linear var(--fall-delay, 0s) infinite;
+}
+
+@keyframes fall {
+  from {
+    transform: translateY(-8vh);
+  }
+
+  to {
+    transform: translateY(108vh);
+  }
+}
+
+/* classic two-frame sprite walk: frames swap on a hard step */
+.sprite-frame-a {
+  animation: show-half 1.1s steps(1, end) infinite;
+}
+
+.sprite-frame-b {
+  animation: hide-half 1.1s steps(1, end) infinite;
+}
+
+@keyframes show-half {
+
+  0%,
+  49.9% {
+    opacity: 1;
+  }
+
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes hide-half {
+
+  0%,
+  49.9% {
+    opacity: 0;
+  }
+
+  50%,
+  100% {
+    opacity: 1;
+  }
+}
+
+.sprite-bob {
+  animation: sprite-bob 4.4s ease-in-out infinite;
+}
+
+@keyframes sprite-bob {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+/* Accessibility: kill all motion when reduced motion is active.
+   Driven by <html data-motion>, set pre-paint from the user's explicit
+   MOTION FX? prompt choice (which overrides the OS preference) - see
+   motionInitScript in layout.tsx and src/lib/motionPref.ts. */
+html[data-motion="reduced"] *,
+html[data-motion="reduced"] *::before,
+html[data-motion="reduced"] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+/* OS-level fallback when JS hasn't set data-motion (explicit "full" still wins). */
+@media (prefers-reduced-motion: reduce) {
+
+  html:not([data-motion="full"]) *,
+  html:not([data-motion="full"]) *::before,
+  html:not([data-motion="full"]) *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --- Achievement trophy --- */
+@keyframes trophy-wobble {
+
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes trophy-shine {
+  0% {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: translateX(220%);
+    opacity: 0;
+  }
+}
+
+.trophy-anim {
+  animation: trophy-wobble 2.4s ease-in-out infinite;
+  transform-origin: 50% 80%;
+}
+
+.trophy-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, .85) 50%, transparent 60%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: trophy-shine 2.4s ease-in-out infinite;
+}
+
+[data-motion="reduced"] .trophy-anim,
+[data-motion="reduced"] .trophy-shine {
+  animation: none;
+}
+
+/* --- GATEKEEPER.SYS sigil --- */
+@keyframes sigil-pulse {
+
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.sigil-pulse {
+  animation: sigil-pulse 2s ease-in-out infinite;
+}
+
+@keyframes sigil-shard-fly {
+  to {
+    transform: translate(var(--tx), var(--ty)) scale(0);
+    opacity: 0;
+  }
+}
+
+.sigil-shard {
+  animation: sigil-shard-fly 0.55s ease-out forwards;
+}
+
+[data-motion="reduced"] .sigil-pulse,
+[data-motion="reduced"] .sigil-shard {
+  animation: none;
+}
+
+/* --- Score odometer --- */
+.odo-reel {
+  transition: transform 0.12s ease-out;
+  will-change: transform;
+}
+
+[data-motion="reduced"] .odo-reel {
+  transition: none;
+}
+
+/* --- Arcade cabinet --- */
+@keyframes cab-arrive {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.cab-arrive {
+  animation: cab-arrive 0.4s ease-out;
+  transform-origin: center;
+}
+
+@keyframes cab-power {
+  0% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  35% {
+    opacity: 0.2;
+  }
+
+  55% {
+    opacity: 1;
+  }
+
+  70% {
+    opacity: 0.4;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.cab-power {
+  animation: cab-power 0.45s steps(1, end);
+}
+
+@keyframes cab-bulb {
+
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.cab-bulb {
+  animation: cab-bulb 1.4s ease-in-out infinite;
+}
+
+@keyframes cab-led-breathe {
+
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.cab-led {
+  animation: cab-led-breathe 2s ease-in-out infinite;
+}
+
+@keyframes cab-side-pulse {
+
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.cab-side {
+  animation: cab-side-pulse 3s ease-in-out infinite;
+}
+
+.cab-joy:hover svg {
+  animation: cab-joy-wobble 0.2s steps(2, end);
+}
+
+@keyframes cab-joy-wobble {
+  0% {
+    transform: translateX(-2px);
+  }
+
+  100% {
+    transform: translateX(2px);
+  }
+}
+
+/* CRT power-on line expand / shrink for the screen during transitions */
+@keyframes cab-crt-on {
+  0% {
+    transform: scaleY(0.02);
+  }
+
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+.cab-crt-on {
+  animation: cab-crt-on 0.2s ease-out;
+  transform-origin: center;
+}
+
+@keyframes cab-crt-off {
+  0% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scaleY(0.02);
+    opacity: 0.4;
+  }
+}
+
+.cab-boot {
+  animation: cab-crt-off 0.18s ease-in forwards;
+}
+
+/* button click flash + panel transition-in */
+@keyframes cab-btn-flash {
+  0% {
+    filter: brightness(2.4);
+  }
+
+  100% {
+    filter: brightness(1);
+  }
+}
+
+.cab-btn-flash {
+  animation: cab-btn-flash 0.25s ease-out;
+}
+
+@keyframes cab-panel-in {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  18% {
+    opacity: 0.3;
+  }
+
+  30% {
+    opacity: 0.9;
+  }
+
+  40% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cab-panel-in {
+  animation: cab-panel-in 0.28s steps(8, end);
+}
+
+[data-motion="reduced"] .cab-arrive,
+[data-motion="reduced"] .cab-power,
+[data-motion="reduced"] .cab-bulb,
+[data-motion="reduced"] .cab-led,
+[data-motion="reduced"] .cab-side,
+[data-motion="reduced"] .cab-joy:hover svg,
+[data-motion="reduced"] .cab-crt-on,
+[data-motion="reduced"] .cab-boot,
+[data-motion="reduced"] .cab-btn-flash,
+[data-motion="reduced"] .cab-panel-in {
+  animation: none;
+}
+
+/* --- PWR cascade (BOMB READY fill) --- */
+@keyframes pwr-cascade {
+  0% {
+    transform: scaleY(0);
+    filter: brightness(3);
+  }
+
+  100% {
+    transform: scaleY(1);
+    filter: none;
+  }
+}
+
+.pwr-cascade {
+  transform-origin: bottom;
+  animation: pwr-cascade 0.25s ease-out backwards;
+}
+
+[data-motion="reduced"] .pwr-cascade {
+  animation: none;
+}
+
+/* --- Hold-swap pop --- */
+@keyframes hold-pop {
+  0% {
+    transform: scale(0.6);
+    filter: brightness(3);
+  }
+
+  100% {
+    transform: scale(1);
+    filter: none;
+  }
+}
+
+.hold-pop {
+  animation: hold-pop 0.18s steps(3, end);
+}
+
+[data-motion="reduced"] .hold-pop {
+  animation: none;
+}
+
+/* --- Arcade cabinet attract mode --- */
+@keyframes defrag-attract-fall {
+  0% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(120px);
+    opacity: 0.2;
+  }
+}
+
+.defrag-attract {
+  top: 0;
+  animation: defrag-attract-fall 2.6s steps(8, end) infinite;
+}
+
+[data-motion="reduced"] .defrag-attract {
+  animation: none;
+  opacity: 0.5;
+}
+
+/* --- Achievement toast --- */
+@keyframes ach-toast-in {
+  0% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.ach-toast {
+  animation: ach-toast-in 0.4s steps(6, end) forwards;
+}
+
+[data-motion="reduced"] .ach-toast {
+  animation: none;
+}
