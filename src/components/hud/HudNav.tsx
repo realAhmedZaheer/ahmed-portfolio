@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { SoundToggle } from "@/components/hud/SoundToggle";
+import { MobileMenu } from "@/components/hud/MobileMenu";
 import { AchievementCounter } from "@/components/achievements/AchievementCounter";
 import { playSound } from "@/lib/sfx";
 
@@ -24,6 +25,7 @@ export function HudNav() {
   const pathname = usePathname() ?? "";
   const reduced = useReducedMotion();
   const [progress, setProgress] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     let raf = 0;
@@ -45,6 +47,9 @@ export function HudNav() {
     };
   }, [pathname]);
 
+  // Close the mobile menu whenever the route changes.
+  useEffect(() => setMenuOpen(false), [pathname]);
+
   const lv = reduced ? 999 : Math.max(1, Math.round(progress * 999));
   const score = reduced ? 999999 : Math.round(progress * 999999);
 
@@ -63,7 +68,7 @@ export function HudNav() {
           AZ<span className="text-pink">▮</span>
         </Link>
 
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 sm:gap-x-5">
+        <div className="hidden flex-wrap items-center gap-x-4 gap-y-1 sm:flex sm:gap-x-5">
           {SCREENS.map((s) => {
             const active = pathname === s.href;
             return (
@@ -89,8 +94,24 @@ export function HudNav() {
           </span>
           <AchievementCounter />
           <SoundToggle />
+          <button
+            type="button"
+            onClick={() => { playSound("confirm"); setMenuOpen(true); }}
+            aria-label="Open menu"
+            aria-expanded={menuOpen}
+            className="font-pixel gx text-[12px] text-cyan hover:text-white sm:hidden"
+          >
+            ☰
+          </button>
         </div>
       </div>
+
+      <MobileMenu
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        screens={SCREENS}
+        pathname={pathname}
+      />
       <div aria-hidden className="h-0.5 bg-purple/20 transition-[height] duration-150 group-hover:h-1.5">
         <div
           className="h-full bg-gradient-to-r from-cyan via-purple to-pink"

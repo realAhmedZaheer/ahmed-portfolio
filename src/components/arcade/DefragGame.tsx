@@ -14,6 +14,7 @@ import type { Board, GameEventTag } from "@/lib/defrag/types";
 import { unlock } from "@/lib/achievements";
 import { isReducedMotion } from "@/lib/motionPref";
 import { unlockAudio } from "@/lib/sfx";
+import { useIsMobile } from "@/lib/useIsMobile";
 import { BackgroundFx, type BgPulseKind } from "./BackgroundFx";
 import { Playfield } from "./Playfield";
 import { GameHud } from "./GameHud";
@@ -21,6 +22,8 @@ import { BossBanner } from "./BossBanner";
 import { PauseOverlay } from "./PauseOverlay";
 import { RunOverScreen } from "./RunOverScreen";
 import { TouchControls } from "./TouchControls";
+import { TouchGuide } from "./TouchGuide";
+import { useTouchControls } from "./useTouchControls";
 
 const LOCK_DELAY = 500;
 const ATTACK_WARN = 1500;
@@ -92,6 +95,11 @@ export function DefragGame({ onExit, onShop }: { onExit(): void; onShop?(): void
   const [pulse, setPulse] = useState<{ kind: BgPulseKind; at: number; x?: number } | null>(null);
   const pulseSeq = useRef(0);
   const breathUntil = useRef(0);
+
+  const isMobile = useIsMobile();
+  const playfieldRef = useRef<HTMLDivElement>(null);
+  const surfaceRef = useRef<HTMLDivElement>(null);
+  useTouchControls({ enabled: isMobile, surfaceRef, playfieldRef, dispatch });
 
   const flashVoice = (line: string, ms = 1800) => {
     setVoice(line);
@@ -283,20 +291,30 @@ export function DefragGame({ onExit, onShop }: { onExit(): void; onShop?(): void
       <BackgroundFx danger={danger} level={state.level} pulse={pulse} />
       <div aria-hidden className="crt-overlay" />
 
-      <div className="relative z-10 flex w-full max-w-3xl flex-col items-center px-3 py-4">
+      <div className="relative z-10 flex w-full max-w-3xl flex-col items-center px-3 pt-4 pb-24 sm:pb-4">
         <div className="w-full max-w-sm">
           <BossBanner boss={state.boss} voice={voice} />
         </div>
         <div className="mt-4 flex w-full flex-col items-center gap-4 sm:flex-row sm:items-start sm:justify-center">
-          <div className="relative aspect-[1/2] h-[82vh] max-h-[780px] border-2 border-purple/40 bg-black/40">
+          <div
+            ref={playfieldRef}
+            className="relative aspect-[1/2] h-[68vh] max-h-[780px] border-2 border-purple/40 bg-black/40 sm:h-[82vh]"
+          >
             <Playfield state={state} />
           </div>
           <GameHud state={state} bombReady={bombReady} />
         </div>
-        <div className="mt-3">
-          <TouchControls dispatch={dispatch} />
-        </div>
       </div>
+
+      {isMobile && (
+        <>
+          <div ref={surfaceRef} aria-hidden className="absolute inset-0 z-20 [touch-action:none]" />
+          <div className="absolute inset-x-0 bottom-0 z-[25] px-2 pb-3">
+            <TouchControls charge={state.charge} dispatch={dispatch} />
+          </div>
+          {state.phase === "playing" && <TouchGuide />}
+        </>
+      )}
 
       {state.phase === "paused" && (
         <PauseOverlay onResume={() => dispatch({ type: "RESUME" })} onExit={onExit} />

@@ -1,11 +1,13 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { GlitchText } from "@/components/fx/GlitchText";
 import { RevealGroup, RevealItem } from "@/components/motion/Reveal";
 import { contact } from "@/content/contact";
 import { ACHIEVEMENTS, ACH_VISIT_KEY, getUnlocked, MAIN_SCREENS } from "@/lib/achievements";
 import { isReducedMotion } from "@/lib/motionPref";
+import { playSound } from "@/lib/sfx";
+import { cn } from "@/lib/cn";
 
 const TAGLINE = "insert coin - or just reach out";
 
@@ -53,6 +55,20 @@ export function ContactMenu() {
     setScore({ visited: readVisitedCount(), unlocked: getUnlocked().size });
   }, []);
 
+  // Email copies the address rather than firing mailto: (which dead-ends to a
+  // blank tab when no mail client is registered).
+  const [copied, setCopied] = useState<string | null>(null);
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (copyTimer.current) clearTimeout(copyTimer.current); }, []);
+
+  const copyEmail = (label: string, href: string) => {
+    navigator.clipboard?.writeText(href.replace(/^mailto:/, "")).catch(() => {});
+    playSound("confirm");
+    setCopied(label);
+    if (copyTimer.current) clearTimeout(copyTimer.current);
+    copyTimer.current = setTimeout(() => setCopied(null), 2000);
+  };
+
   return (
     <div className="mx-auto max-w-xl text-center">
       <GlitchText text="CONTINUE?" as="p" className="text-xl text-white sm:text-3xl" />
@@ -76,12 +92,22 @@ export function ContactMenu() {
         <ul className="mt-8 border-t-2 border-purple/30">
           {links.map((c) => {
             const external = c.href.startsWith("http");
+            const isMail = c.href.startsWith("mailto:");
+            const isCopied = copied === c.label;
             return (
               <RevealItem key={c.label}>
                 <li className="group border-b-2 border-purple/30">
                   <a
                     href={c.href}
                     {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                    {...(isMail
+                      ? {
+                          onClick: (e: React.MouseEvent) => {
+                            e.preventDefault();
+                            copyEmail(c.label, c.href);
+                          },
+                        }
+                      : {})}
                     className="gx-row flex items-center justify-between px-4 py-5 hover:bg-purple/10"
                   >
                     <span className="font-pixel text-[10px] text-white group-hover:text-yellow">
@@ -93,8 +119,14 @@ export function ContactMenu() {
                       </span>
                       {c.label.toUpperCase()}
                     </span>
-                    <span aria-hidden className="font-pixel text-[9px] text-dim group-hover:text-cyan">
-                      {c.prompt}
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "font-pixel text-[9px]",
+                        isCopied ? "text-term" : "text-dim group-hover:text-cyan",
+                      )}
+                    >
+                      {isCopied ? "✓ COPIED" : c.prompt}
                     </span>
                   </a>
                 </li>
@@ -103,6 +135,8 @@ export function ContactMenu() {
           })}
         </ul>
       </RevealGroup>
+
+      <p className="sr-only" aria-live="polite">{copied ? `${copied} address copied` : ""}</p>
 
       <p className="font-term mt-8 text-lg text-dim">
         Melbourne, AU · open to AI/ML + full-stack roles

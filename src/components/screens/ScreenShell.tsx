@@ -1,8 +1,10 @@
 "use client";
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { HudNav } from "@/components/hud/HudNav";
 import { ScreenNav } from "@/components/screens/ScreenNav";
+import { adjacentScreens } from "@/components/screens/progression";
 import { ScreenAtmosphere } from "@/components/screens/ScreenAtmosphere";
 import { Footer } from "@/components/layout/Footer";
 import { playSound } from "@/lib/sfx";
@@ -61,6 +63,7 @@ export function ScreenShell({ children }: { children: React.ReactNode }) {
   }, [pathname]);
 
   const info = SCREEN_INFO[pathname];
+  const { prev, next } = adjacentScreens(pathname);
 
   return (
     <>
@@ -78,20 +81,45 @@ export function ScreenShell({ children }: { children: React.ReactNode }) {
         <Footer />
       </div>
 
-      <div
-        aria-hidden
-        className="fixed inset-x-0 bottom-0 z-[95] border-t-2 border-purple/40 bg-bg2/95"
-      >
-        <div className="font-pixel mx-auto flex max-w-5xl items-center justify-between px-4 py-2 text-[7px] text-dim">
-          <span>ESC ◀ TITLE</span>
+      <div className="fixed inset-x-0 bottom-0 z-[95] border-t-2 border-purple/40 bg-bg2/95">
+        <div className="font-pixel mx-auto flex max-w-5xl items-center justify-between gap-2 px-4 py-2 text-[7px] text-dim">
+          <div className="flex flex-1 items-center">
+            {prev ? (
+              <Link
+                href={prev.href}
+                onClick={() => playSound("back")}
+                aria-label={`Previous screen: ${prev.name}`}
+                className="gx text-cyan sm:hidden"
+              >
+                ◀&nbsp;{prev.name}
+              </Link>
+            ) : (
+              <span className="sm:hidden" />
+            )}
+            <span aria-hidden className="hidden sm:inline">ESC ◀ TITLE</span>
+          </div>
           {info && (
-            <span className="text-cyan">
+            <span aria-hidden className="shrink-0 text-center text-cyan">
               {info.n === 0
                 ? `★ SIDE QUEST - ${info.name}`
                 : `SCREEN ${info.n}/5 - ${info.name}`}
             </span>
           )}
-          <span className="hidden sm:inline">↑↓ / SCROLL</span>
+          <div className="flex flex-1 items-center justify-end">
+            {next ? (
+              <Link
+                href={next.href}
+                onClick={() => playSound("confirm")}
+                aria-label={`Next screen: ${next.name}`}
+                className="gx text-cyan sm:hidden"
+              >
+                {next.name}&nbsp;▶
+              </Link>
+            ) : (
+              <span className="sm:hidden" />
+            )}
+            <span aria-hidden className="hidden sm:inline">↑↓ / SCROLL</span>
+          </div>
         </div>
       </div>
     </>
