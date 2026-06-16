@@ -1,4 +1,4 @@
-export const BOOT_KEY = "az_boot_seen_v1";
+export const BOOT_KEY = "az_intro_seen_v1";
 
 /** In dev mode, replay boot every load; in prod, first-visit-only. */
 export const BOOT_ALWAYS_PLAY = process.env.NODE_ENV === "development";

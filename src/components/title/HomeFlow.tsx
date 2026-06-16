@@ -30,8 +30,11 @@ export function HomeFlow() {
     const decide = () => {
       if (started) return;
       started = true;
+      // Read the decision before marking seen (markBootSeen flips the flag
+      // shouldPlayBoot checks).
+      const play = shouldPlayBoot(window.localStorage) && !isReducedMotion();
       markBootSeen(window.localStorage);
-      if (!shouldPlayBoot(window.localStorage) || isReducedMotion()) {
+      if (!play) {
         setPhase("title");
         return;
       }
